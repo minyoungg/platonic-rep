@@ -1,0 +1,4 @@
+data/
+results/alignment
+**__pycache__/**
+.pyc*
