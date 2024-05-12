@@ -30,7 +30,7 @@ pip install -r requirements.txt
 <h3> Running alignment </h3>
 <br />
 
-<b> (1) extracting features</b>
+<b> (1) Extracting features</b>
 
 First, we extract features from the models.
 
@@ -44,7 +44,7 @@ python extract_features.py --dataset minhuh/prh --subset wit_1024 --modelset val
 
 The resulting features are stored in `./results/features` 
 
-<b> (2) measuring vision-language alignment</b>
+<b> (2) Measuring vision-language alignment</b>
 
 After extracting the features, you can compute the alignment score by 
 
@@ -69,7 +69,7 @@ dict_keys(['scores', 'indices'])
 
 We provide code to compute alignment scores for your own model while training/evaluating.
 
-<b> (1) initiate the metric scoring function </b>
+<b> (1) Initiate the metric scoring function </b>
 
 ```python
 import platonic
@@ -88,7 +88,7 @@ texts = platonic_metric.get_data(modality="text")
 We provide some precomputed features, so you don't have to compute it yourself. It will automatically download them for you.
 See `SUPPORTED_DATASETS` in `platonic.py`. <b>Note</b>: We will add more in the upcoming weeks.
 
-<b> (2) extract the features from your model </b> 
+<b> (2) Extract the features from your model </b> 
 
 ```python
 # your model has to have `output_hidden_states=True`
