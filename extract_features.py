@@ -170,10 +170,6 @@ def extract_lvm_features(filenames, dataset, args):
 
 
 if __name__ == "__main__":
-    """    
-    python extract_features.py --dataset minhuh/prh --subset wit_1024 --modelset val --modality language --pool avg
-    python extract_features.py --dataset minhuh/prh --subset wit_1024 --modelset val --modality vision --pool none
-    """
     
     parser = argparse.ArgumentParser()
     parser.add_argument("--force_download", action="store_true")

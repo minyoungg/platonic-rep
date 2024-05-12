@@ -118,9 +118,6 @@ def compute_alignment(x_feat_paths, y_feat_paths, metric, topk, precise=True):
 if __name__ == "__main__":
     """
     recommended to use llm as modality_x since it will load each LLM features once
-    
-    python measure_alignment.py --dataset minhuh/prh --subset wit_1024 --modelset val \
-        --modality_x language --pool_x avg --modality_y vision --pool_y none
     """
     
     parser = argparse.ArgumentParser()

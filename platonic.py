@@ -5,13 +5,57 @@ from datasets import load_dataset
 from measure_alignment import compute_score, prepare_features
 
 
+# NOTE: there are models we did not list, feel free to add more or your custom models
+# here is the full list of precomputed features http://vision14.csail.mit.edu/prh/wit_1024/
+
 SUPPORTED_DATASETS = {
     "wit_1024": {
-        "dinov2_g": "./results/features/minhuh/prh/wit_1024/vit_giant_patch14_dinov2.lvd142m_pool-none.pt",
-        "clip_h": "./results/features/minhuh/prh/wit_1024/vit_huge_patch14_clip_224.laion2b_pool-none.pt",
-        "llama_65b": "./results/features/minhuh/prh/wit_1024/huggyllama_llama-65b_pool-avg.pt",
+        "dinov2_s": {
+            "path": "./results/features/minhuh/prh/wit_1024/vit_small_patch14_dinov2.lvd142m_pool-none.pt",
+            "url": "http://vision14.csail.mit.edu/prh/wit_1024/vit_small_patch14_dinov2.lvd142m_pool-none.pt"
+        },
+        "dinov2_m": {
+            "path": "./results/features/minhuh/prh/wit_1024/vit_base_patch14_dinov2.lvd142m_pool-none.pt",
+            "url": "http://vision14.csail.mit.edu/prh/wit_1024/vit_base_patch14_dinov2.lvd142m_pool-none.pt"
+        },
+        "dinov2_l": {
+            "path": "./results/features/minhuh/prh/wit_1024/vit_large_patch14_dinov2.lvd142m_pool-none.pt",
+            "url": "http://vision14.csail.mit.edu/prh/wit_1024/vit_large_patch14_dinov2.lvd142m_pool-none.pt"
+        },
+        "dinov2_g": {
+             "path": "./results/features/minhuh/prh/wit_1024/vit_giant_patch14_dinov2.lvd142m_pool-none.pt",
+             "url": "http://vision14.csail.mit.edu/prh/wit_1024/vit_giant_patch14_dinov2.lvd142m_pool-none.pt"
+        },
+        "clip_b": {
+            "path": "./results/features/minhuh/prh/wit_1024/vit_base_patch16_clip_224.laion2b_pool-none.pt",
+            "url": "http://vision14.csail.mit.edu/prh/wit_1024/vit_base_patch16_clip_224.laion2b_pool-none.pt"
+        },
+        "clip_l": {
+            "path": "./results/features/minhuh/prh/wit_1024/vit_large_patch14_clip_224.laion2b_pool-none.pt",
+            "url": "http://vision14.csail.mit.edu/prh/wit_1024/vit_large_patch14_clip_224.laion2b_pool-none.pt"
+        },
+        "clip_h": {
+            "path": "./results/features/minhuh/prh/wit_1024/vit_huge_patch14_clip_224.laion2b_pool-none.pt",
+            "url": "http://vision14.csail.mit.edu/prh/wit_1024/vit_huge_patch14_clip_224.laion2b_pool-none.pt"   
+        },
+        "llama-7b": {
+            "path": "./results/features/minhuh/prh/wit_1024/huggyllama_llama-7b_pool-avg.pt",
+            "url": "http://vision14.csail.mit.edu/prh/wit_1024/huggyllama_llama-7b_pool-avg.pt"
+        },
+        "llama-13b": {
+            "path": "./results/features/minhuh/prh/wit_1024/huggyllama_llama-13b_pool-avg.pt",
+            "url": "http://vision14.csail.mit.edu/prh/wit_1024/huggyllama_llama-13b_pool-avg.pt"
+        },
+        "llama-30b": { # NOTE this is 33B https://huggingface.co/huggyllama/llama-30b
+            "path": "./results/features/minhuh/prh/wit_1024/huggyllama_llama-30b_pool-avg.pt",
+            "url": "http://vision14.csail.mit.edu/prh/wit_1024/huggyllama_llama-30b_pool-avg.pt"
+        },
+        "llama_65b": {
+            "path": "./results/features/minhuh/prh/wit_1024/huggyllama_llama-65b_pool-avg.pt",   
+            "url": "http://vision14.csail.mit.edu/prh/wit_1024/huggyllama_llama-65b_pool-avg.pt"
         }
     }
+}
 
 
 class Alignment():
@@ -32,9 +76,18 @@ class Alignment():
         # loads the features from path if it does not exist it will download
         self.features = {}
         for m in models:
-            feat_path = SUPPORTED_DATASETS[subset][m]
+            feat_path = SUPPORTED_DATASETS[subset][m]["path"]
+            feat_url = SUPPORTED_DATASETS[subset][m]["url"]
+            
             if not os.path.exists(feat_path):
-                raise ValueError(f"feature path {feat_path} does not exist for {m} in {dataset}/{subset}")
+                print(f"downloading features for {m} in {dataset}/{subset} from {feat_url}")
+                
+                # download and save the features in the feat_path
+                os.makedirs(os.path.dirname(feat_path), exist_ok=True)
+                os.system(f"wget {feat_url} -O {feat_path}")
+
+                if not os.path.exists(feat_path):            
+                    raise ValueError(f"feature path {feat_path} does not exist for {m} in {dataset}/{subset}")
 
             self.features[m] = self.load_features(feat_path)
             

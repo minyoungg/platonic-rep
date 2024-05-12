@@ -1,4 +1,4 @@
 data/
-results/alignment
+results/
 **__pycache__/**
 .pyc*
