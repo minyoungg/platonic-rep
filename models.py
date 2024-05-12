@@ -3,6 +3,7 @@ from transformers import AutoModelForCausalLM, BitsAndBytesConfig, AutoTokenizer
 
 
 def auto_determine_dtype():
+    """ automatic dtype setting. override this if you want to force a specific dtype """
     compute_dtype = torch.bfloat16 if check_bfloat16_support() else torch.float32
     torch_dtype = torch.bfloat16 if check_bfloat16_support() else torch.float32
     print(f"compute_dtype:\t{compute_dtype}")
@@ -11,6 +12,7 @@ def auto_determine_dtype():
 
 
 def check_bfloat16_support():
+    """ checks if cuda driver/device supports bfloat16 computation """
     if torch.cuda.is_available():
         current_device = torch.cuda.current_device()
         compute_capability = torch.cuda.get_device_capability(current_device)
@@ -22,7 +24,8 @@ def check_bfloat16_support():
         return None
     
     
-def load_llm(llm_model_path, qlora=True, force_download=False):
+def load_llm(llm_model_path, qlora=False, force_download=False):
+    """ load huggingface language model """
     compute_dtype, torch_dtype = auto_determine_dtype()
     
     quantization_config = None
@@ -49,6 +52,7 @@ def load_llm(llm_model_path, qlora=True, force_download=False):
 
 
 def load_tokenizer(llm_model_path):
+    """ setting up tokenizer. if your tokenizer needs special settings edit here. """
     tokenizer = AutoTokenizer.from_pretrained(llm_model_path)
     
     if "huggyllama" in llm_model_path:

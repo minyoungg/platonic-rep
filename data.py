@@ -1,16 +1,9 @@
-import time
 import os
 import io
 import PIL.Image
 import urllib
-import random
 import traceback
-from PIL import Image
-import json, csv
-
-import torch
-from torchvision import datasets, transforms
-from torch.utils.data import DataLoader
+import json
 
 import numpy as np
 from tqdm.auto import tqdm
@@ -43,7 +36,9 @@ def get_image_from_url(image_url, timeout=3, verbose=False):
     return image
 
 
-def prepare_facebook_pmd_dataset(subset, save_dataset, save_subset, num_samples=4096, seed=None, save_dir='./data', upload_to_hub=True):
+def prepare_facebook_pmd_dataset(
+    subset, save_dataset, save_subset, num_samples=4096, seed=None, save_dir='./data', upload_to_hub=True
+    ):
     """ 
     This code only works for facebook/pmd datasets.
     Saving images and texts as numpy for faster loading later.
@@ -51,6 +46,11 @@ def prepare_facebook_pmd_dataset(subset, save_dataset, save_subset, num_samples=
     NOTE: many caption datasets are not shuffled, hence downloading the full dataset is recommended. 
         This can generate roughly 50GB per dataset, so make sure you have enough space.
         The code will also through error messages if images/caption no longer exists.
+        
+    NOTE: original image set used in the paper downloaded 4096 samples, 
+        sorted the files and took the first 1024 for the smaller subset.
+        we used standard sort instead of natural sort so there is some 
+        inconsistencies in the examples used.
     """
     
     save_dir = f"{save_dir}/{save_dataset}/{save_subset}"
@@ -151,13 +151,6 @@ def prepare_facebook_pmd_dataset(subset, save_dataset, save_subset, num_samples=
 
 
 if __name__ == "__main__":
-
+    # example code of how the data partition was generated
+    # see notes in prepare_facebook_pmd_dataset for minor details
     prepare_facebook_pmd_dataset(subset="wit", save_dataset="prh", save_subset="wit_1024", num_samples=1024, seed=42)
-    
-    # dataset = load_dataset("./data/prh/wit_1024")
-    # import ipdb; ipdb.set_trace()
-
-    """
-    huggingface-cli repo create prh --type dataset
-    huggingface-cli upload prh ./ --repo-type dataset --revision wit_1024
-    """

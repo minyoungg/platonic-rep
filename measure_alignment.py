@@ -62,7 +62,20 @@ def compute_score(x_feats, y_feats, metric="mutual_knn", topk=10, normalize=True
     return best_alignment_score, best_alignment_indices
 
     
-def compute_alignment(x_feat_paths, y_feat_paths, metric, topk, precise=False):
+def compute_alignment(x_feat_paths, y_feat_paths, metric, topk, precise=True):
+    """
+    Args:
+        x_feat_paths: list of paths to x features
+        y_feat_paths: list of paths to y features
+        metric: the metric to use
+        topk: the number of nearest neighbors to use (specific to knn metrics)
+        precise: if true use exact quantiling. (helpful to set to false if running on cpu)
+            this is more of a feature to speed up matmul if using float32 
+            used in measure_alignment.py
+    Returns:
+        alignment_scores: a numpy array of shape len(x_feat_paths) x len(y_feat_paths)
+        alignment_indices: a numpy array of shape len(x_feat_paths) x len(y_feat_paths) x 2
+    """
     
     os.makedirs(args.output_dir, exist_ok=True)
 

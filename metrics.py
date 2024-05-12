@@ -121,7 +121,7 @@ class AlignmentMetrics:
     @staticmethod
     def unbiased_cka(*args, **kwargs):
         kwargs['unbiased'] = True
-        return alignment.cka(*args, **kwargs)
+        return AlignmentMetrics.cka(*args, **kwargs)
     
     
     @staticmethod
@@ -249,6 +249,7 @@ def hsic_unbiased(K, L):
 
 
 def hsic_biased(K, L):
+    """ Compute the biased HSIC (the original CKA) """
     H = torch.eye(K.shape[0], dtype=K.dtype, device=K.device) - 1 / K.shape[0]
     return torch.trace(K @ H @ L @ H)
 
@@ -283,32 +284,9 @@ def compute_nearest_neighbors(feats, topk=1):
     return knn
 
 
-def find_unique_indices(tensor):
-    # flatten the tensor along dimensions other than the first
-    flat_tensor = tensor.view(tensor.size(0), -1)
-    flat_tensor = flat_tensor 
-    flat_tensor = flat_tensor.abs().sum(-1)
-
-    # sort the tensor along the first dimension
-    sorted_tensor, sorted_indices = torch.sort(flat_tensor, dim=0)
-
-    # compute the differences between adjacent rows
-    diffs = torch.diff(sorted_tensor, dim=0)
-
-    # find rows where the difference is non-zero (indicating uniqueness)
-    unique_row_mask = torch.argwhere(diffs > 1e-12)
-    unique_indices = sorted_indices[unique_row_mask.squeeze()]
-
-    return unique_indices
-
-
 def longest_ordinal_sequence(X, Y):
-    """
-    For each pair of rows in X and Y, compute the length of the longest ordinal sequence (LCS).
-    """
-    B, N = X.shape
-    lcs_lengths = torch.zeros(B, dtype=torch.int32)
-
+    """ For each pair in X and Y, compute the length of the longest sub-sequence (LCS) """
+    
     def lcs_length(x, y):
         """
         Compute the length of the longest common subsequence between two sequences.
@@ -346,15 +324,14 @@ def compute_distance(X, Y, dist_fn):
 
 
 def remove_outliers(feats, q, exact=False, max_threshold=None):
-    # return feats.clamp(-5, 5)
     if q == 1:
         return feats
 
     if exact:
-        # exact
+        # sorts the whole tensor and gets the q-th percentile
         q_val = feats.view(-1).abs().sort().values[int(q * feats.numel())]
     else:
-        # element was quantiling (this is a biased estimate faster to run)
+        # quantile for element in the tensor and take the average
         q_val = torch.quantile(feats.abs().flatten(start_dim=1), q, dim=1).mean()
 
     if max_threshold is not None:
@@ -376,7 +353,7 @@ if __name__ == "__main__":
     trials = 10
 
     t0 = time.time()
-    for metric in alignment.SUPPORTED_METRICS:
+    for metric in AlignmentMetrics.SUPPORTED_METRICS:
 
         scores, times = [], []
         for t in range(trials):
@@ -390,7 +367,7 @@ if __name__ == "__main__":
             if 'kernel' in metric:
                 kwargs['dist'] = 'sample'
 
-            score = alignment.measure(metric, feats_A, feats_B, **kwargs)
+            score = AlignmentMetrics.measure(metric, feats_A, feats_B, **kwargs)
             scores.append(score)
             times.append(time.time() - t_st)        
         print(f"{metric.rjust(20)}: {np.mean(scores):1.3f} [elapsed: {np.mean(times):.2f}s]")

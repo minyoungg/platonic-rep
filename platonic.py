@@ -16,9 +16,7 @@ SUPPORTED_DATASETS = {
 
 class Alignment():
 
-    
     def __init__(self, dataset, subset, models=[], device="cuda", dtype=torch.bfloat16):
-        """ loads the dataset from subset """
         
         if dataset != "minhuh/prh":
             # TODO: support external datasets in the future
@@ -51,16 +49,27 @@ class Alignment():
 
     
     def get_data(self, modality):
-        """ loads text data """
+        """ load data 
+        TODO: use multiprocessing to speed up loading
+        """
         if modality == "text": # list of strings
             return [x['text'][0] for x in self.dataset]
         elif modality == "image": # list of PIL images
             return [x['image'] for x in self.dataset]
-
+        else:
+            raise ValueError(f"modality {modality} not supported")
     
     def score(self, features, metric, *args, **kwargs):
         """ 
-        Scores the features 
+        Args:
+            features (torch.Tensor): features to compare
+            metric (str): metric to use
+            *args: additional arguments for compute_score / metrics.AlignmentMetrics
+            **kwargs: additional keyword arguments for compute_score / metrics.AlignmentMetrics
+        Returns:
+            dict: scores for each model organized as 
+                {model_name: (score, layer_indices)} 
+                layer_indices are the index of the layer with maximal alignment
         """
         scores = {}
         for m in self.models:
