@@ -30,7 +30,7 @@ pip install -r requirements.txt
 <h3> Running alignment </h3>
 <br />
 
-<b> (1) extracting features</b>
+<b> (1) Extracting features</b>
 
 First, we extract features from the models.
 
@@ -44,7 +44,8 @@ python extract_features.py --dataset minhuh/prh --subset wit_1024 --modelset val
 
 The resulting features are stored in `./results/features` 
 
-<b> (2) measuring vision-language alignment</b>
+<b> (2) Measuring vision-language alignment</b>
+
 After extracting the features, you can compute the alignment score by 
 
 ```bash
