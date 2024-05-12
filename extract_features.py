@@ -56,7 +56,7 @@ def extract_llm_features(filenames, dataset, args):
 
         for i in trange(0, len(dataset), args.batch_size):
             # get embedding cuda device
-            token_inputs = {k: v[i : i + args.batch_size].to(device).long() for (k, v) in tokens.items()}
+            token_inputs = {k: v[i:i+args.batch_size].to(device).long() for (k, v) in tokens.items()}
 
             with torch.no_grad():
                 if "olmo" in llm_model_name.lower():
@@ -74,7 +74,7 @@ def extract_llm_features(filenames, dataset, args):
                 loss, avg_loss = utils.cross_entropy_loss(token_inputs, llm_output)
                 losses.extend(avg_loss.cpu())
                 
-                bpb = utils.cross_entropy_to_bits_per_unit(loss.cpu(), texts[i : i + args.batch_size], unit="byte")
+                bpb = utils.cross_entropy_to_bits_per_unit(loss.cpu(), texts[i:i+args.batch_size], unit="byte")
                 bpb_losses.extend(bpb)
                 
                 # make sure to do all the processing in cpu to avoid memory problems

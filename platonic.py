@@ -37,13 +37,13 @@ import os
 import torch
 
 from datasets import load_dataset
-from metrics import AlignmentMetrics
+from measure_alignment import compute_score, prepare_features
 
 
 SUPPORTED_DATASETS = {
     "wit_1024": {
-        "dinov2": "/vision-nfs/isola/projects/minhuh/platonic-rep/results/features/wit/1024/vit_giant_patch14_dinov2.lvd142m_pool-none_prompt-False.pt",
-        "clip": "/vision-nfs/isola/projects/minhuh/platonic-rep/results/features/wit/1024/vit_huge_patch14_clip_224.laion2b_pool-none_prompt-False.pt",
+        "dinov2": "./results/features/minhuh/prh/wit_1024/vit_giant_patch14_dinov2.lvd142m_pool-none.pt",
+        "clip": "./results/features/minhuh/prh/wit_1024/vit_huge_patch14_clip_224.laion2b_pool-none.pt",
         }
     }
 
@@ -67,13 +67,12 @@ class Alignment():
 
         # loads the features from path if it does not exist it will download
         self.features = {}
-        if False:
-            for m in models:
-                feat_path = SUPPORTED_DATASETS[subset][m]
-                if not os.path.exists(feat_path):
-                    raise ValueError(f"feature path {feat_path} does not exist for {m} in {dataset}/{subset}")
+        for m in models:
+            feat_path = SUPPORTED_DATASETS[subset][m]
+            if not os.path.exists(feat_path):
+                raise ValueError(f"feature path {feat_path} does not exist for {m} in {dataset}/{subset}")
 
-                self.features[m] = self.load_features(feat_path)
+            self.features[m] = self.load_features(feat_path)
             
         # download dataset from huggingface        
         self.dataset = load_dataset(dataset, revision=subset, split='train')
@@ -93,18 +92,19 @@ class Alignment():
             return [x['image'] for x in self.dataset]
 
     
-    def score(self, features, metric, topk):
-        """ scores the features """
-        return
+    def score(self, features, metric, *args, **kwargs):
+        """ 
+        Scores the features 
+        """
+        scores = {}
+        for m in self.models:
+            scores[m] = compute_score(
+                prepare_features(features.to(device=self.device, dtype=self.dtype)), 
+                prepare_features(self.features[m].to(device=self.device, dtype=self.dtype)),
+                metric, 
+                *args, 
+                **kwargs
+            )
+        return scores        
     
     
-
-def upload_kernels_to_huggingface():
-    """ uploads the kernels to huggingface """
-    
-    generated_dataset = load_dataset("pt", data_files=f"{save_dir}/metadata.jsonl", split="train")
-    return
-    
-
-if __name__ == "__main__":
-    upload_kernels_to_huggingface()
