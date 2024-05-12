@@ -38,7 +38,7 @@ if True:
         llm_feats.append(feats)
         
     llm_feats = torch.cat(llm_feats)
-    score = platonic_metric.score(llm_feats, metric="cknna", topk=5, model="dinov2")
+    score = platonic_metric.score(llm_feats, metric="mutual_knn", topk=10, normalize=True)
     pprint(score)
 else:
     pass 
