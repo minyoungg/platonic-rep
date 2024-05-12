@@ -69,7 +69,14 @@ dict_keys(['scores', 'indices'])
 
 We provide code to compute alignment scores for your own model while training/evaluating.
 
-<b> (1) Initiate the metric scoring function </b>
+<b> (1) Install library as pip package </b>
+First install the library as a pip package
+
+```bash
+pip install -e .
+```
+
+<b> (2) Initiate the metric scoring function </b>
 
 ```python
 import platonic
@@ -79,7 +86,7 @@ platonic_metric = platonic.Alignment(
                     dataset="minhuh/prh", # <--- this is dataset 
                     subset="wit_1024",    # <--- this is subset
                     models=["dinov2_g", "clip_h"],
-                    ) # you can also pass in device and dtype as arguments
+                    ) # optional arguments device, dtype, save_dir (or path to your features)
 
 # load texts
 texts = platonic_metric.get_data(modality="text")
@@ -88,7 +95,7 @@ texts = platonic_metric.get_data(modality="text")
 We provide some precomputed features, so you don't have to compute it yourself. It will automatically download them for you.
 See `SUPPORTED_DATASETS` in `platonic.py`. <b>Note</b>: We will add more in the upcoming weeks.
 
-<b> (2) Extract the features from your model </b> 
+<b> (3) Extract the features from your model </b> 
 
 ```python
 # your model has to have `output_hidden_states=True`
