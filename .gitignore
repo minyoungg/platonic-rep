@@ -1,4 +1,5 @@
 data/
 results/
+*egg-info/**
 **__pycache__/**
-.pyc*
+*.pyc*
