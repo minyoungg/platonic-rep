@@ -14,8 +14,10 @@
 <h3> Requirements </h3>
 <br />
 
-`python >= 3.10`
-`PyTorch >= 2.0.0`
+Developed on  
+
+`python = 3.11`
+`PyTorch = 2.2.0`
 
 You can install the rest of the requirements via
 
@@ -36,7 +38,7 @@ First, we extract features from the models.
 # extract all language model features and pool them along each block
 python extract_features.py --dataset minhuh/prh --subset wit_1024 --modelset val --modality language --pool avg
 
-# extract last layer features of all vision models
+# Extract last layer features of all vision models
 python extract_features.py --dataset minhuh/prh --subset wit_1024 --modelset val --modality vision --pool none
 ```
 
@@ -62,8 +64,51 @@ dict_keys(['scores', 'indices'])
 ```
 
 <hr>
+<h3> Alignment scoring on your own model </h3>
 
-<h3> Customization </h3>
+We provide code to compute alignment scores for your own model while training/evaluating.
+
+<b> (1) Initiate the metric scoring function </b>
+
+```python
+import platonic
+
+# setup platonic metric
+platonic_metric = platonic.Alignment(
+                    dataset="minhuh/prh", # <--- this is dataset 
+                    subset="wit_1024",    # <--- this is subset
+                    models=["dinov2_g", "clip_h"],
+                    ) # you can also pass in device and dtype as arguments
+
+# load texts
+texts = platonic_metric.get_data(modality="text")
+```
+
+We provide some precomputed features, so you don't have to compute it yourself. It will automatically download them for you.
+See `SUPPORTED_DATASETS` in `platonic.py`. <b>Note</b>: We will add more in the upcoming weeks.
+
+<b> (2) Extract the features from your model </b> 
+
+```python
+# your model has to have `output_hidden_states=True`
+with torch.no_grad():
+        llm_output = language_model(
+            input_ids=token_inputs["input_ids"],
+            attention_mask=token_inputs["attention_mask"],
+        )
+        feats = torch.stack(llm_output["hidden_states"]).permute(1, 0, 2, 3)
+
+# using average pooling (only on valid tokens)
+mask = token_inputs["attention_mask"].unsqueeze(-1).unsqueeze(1)
+feats = (feats * mask).sum(2) / mask.sum(2)
+
+# compute score. the score is dict for each model where each entry contains the (scores, maximal alignment layer indices)
+score = platonic_metric.score(feats, metric="mutual_knn", topk=10, normalize=True)
+```
+
+<hr>
+
+<h3> Customization / Questions </h3>
 <br />
 
 <b> ❔ Can I add additional models? </b><br>
@@ -104,6 +149,21 @@ score = AlignmentMetrics.measure('cknna', feats_A, feats_B, topk=10)
 score = AlignmentMetrics.cknna(feats_A, feats_B, topk=10)
 ```
 
+<br />
+<br />
+
+<b> ❔ I want to add my own custom features for `platonic` </b><br>
+To add custom models, add it to `SUPPORTED_DATASETS`.
+
+
+<br />
+<br />
+
+<b> ❔ Download URL is down. What do I do? </b><br>
+If our download URL is down, please give it some time, as we will try to set it back up as soon as possible.
+In the meantime, you can compute the same exact features by running the example code in the `extracting features` section above.
+
+<br />
 
 <hr> 
 
