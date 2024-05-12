@@ -80,6 +80,7 @@ class AlignmentMetrics:
         llm_mask[range_tensor, knn_B] = 1.0
         
         acc = (lvm_mask * llm_mask).sum(dim=1) / topk
+        
         return acc.mean().item()
     
     

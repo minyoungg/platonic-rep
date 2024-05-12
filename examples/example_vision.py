@@ -13,7 +13,7 @@ from torchvision.models.feature_extraction import create_feature_extractor
 platonic_metric = platonic.Alignment(
                     dataset="minhuh/prh", # <--- this is dataset 
                     subset="wit_1024",    # <--- this is subset
-                    models=["llama_65b"], 
+                    models=["openllama_7b"], #, "llama_65b"], 
                     ) # you can also pass in device and dtype as arguments
 
 # load images
@@ -32,7 +32,7 @@ return_nodes = [f"blocks.{i}.add_1" for i in range(len(vision_model.blocks))]
 vision_model = create_feature_extractor(vision_model, return_nodes=return_nodes)
 
 lvm_feats = []
-batch_size = 32
+batch_size = 4
 
 for i in trange(0, len(images), batch_size):
     ims = torch.stack([transform(images[j]) for j in range(i,i+batch_size)]).cuda()
@@ -40,9 +40,9 @@ for i in trange(0, len(images), batch_size):
     with torch.no_grad():
         lvm_output = vision_model(ims)
 
-    feats = torch.stack([v[:, -1, :] for v in lvm_output.values()]).permute(1, 0, 2)
-    lvm_feats.append(feats.cpu())
-
+    feats = torch.stack([v[:, 0, :] for v in lvm_output.values()]).permute(1, 0, 2)
+    lvm_feats.append(feats)
+    
 # compute score 
 lvm_feats = torch.cat(lvm_feats)
 score = platonic_metric.score(lvm_feats, metric="mutual_knn", topk=10, normalize=True)

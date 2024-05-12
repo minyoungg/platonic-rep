@@ -58,7 +58,7 @@ def compute_score(x_feats, y_feats, metric="mutual_knn", topk=10, normalize=True
             if score > best_alignment_score:
                 best_alignment_score = score
                 best_alignment_indices = (i, j)
-                
+    
     return best_alignment_score, best_alignment_indices
 
     

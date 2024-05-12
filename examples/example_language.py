@@ -9,7 +9,7 @@ from pprint import pprint
 platonic_metric = platonic.Alignment(
                     dataset="minhuh/prh", # <--- this is dataset 
                     subset="wit_1024",    # <--- this is subset
-                    models=["dinov2_g", "clip_h"],
+                    models=["dinov2_g"]#, "clip_h"],
                     ) # you can also pass in device and dtype as arguments
 
 # load texts
@@ -25,7 +25,7 @@ tokenizer = load_tokenizer(model_name)
 tokens = tokenizer(texts, padding="longest", return_tensors="pt")        
 
 llm_feats = []
-batch_size = 32
+batch_size = 4
 
 for i in trange(0, len(texts), batch_size):
     token_inputs = {k: v[i:i+batch_size].to(device).long() for (k, v) in tokens.items()}
@@ -38,6 +38,7 @@ for i in trange(0, len(texts), batch_size):
     mask = token_inputs["attention_mask"].unsqueeze(-1).unsqueeze(1).cpu()
     feats = (feats * mask).sum(2) / mask.sum(2)
     llm_feats.append(feats)
+    # import ipdb; ipdb.set_trace()
     
 llm_feats = torch.cat(llm_feats)
 

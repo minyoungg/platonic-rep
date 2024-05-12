@@ -47,10 +47,10 @@ def prepare_facebook_pmd_dataset(
         This can generate roughly 50GB per dataset, so make sure you have enough space.
         The code will also through error messages if images/caption no longer exists.
         
-    NOTE: original image set used in the paper downloaded 4096 samples, 
+    NOTE: (WARNING) original image set used in the paper downloaded 4096 samples, 
         sorted the files and took the first 1024 for the smaller subset.
         we used standard sort instead of natural sort so there is some 
-        inconsistencies in the examples used.
+        inconsistencies in the examples used. We uploaded the dataset used in the paper to huggingface.
     """
     
     save_dir = f"{save_dir}/{save_dataset}/{save_subset}"

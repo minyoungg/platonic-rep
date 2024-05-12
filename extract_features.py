@@ -82,7 +82,7 @@ def extract_llm_features(filenames, dataset, args):
                     feats = torch.stack(llm_output["hidden_states"]).permute(1, 0, 2, 3)
                     mask = token_inputs["attention_mask"].unsqueeze(-1).unsqueeze(1)
                     feats = (feats * mask).sum(2) / mask.sum(2)
-                elif args.pool == 'none':
+                elif args.pool == 'last':
                     feats = [v[:, -1, :] for v in llm_output["hidden_states"]]
                     feats = torch.stack(feats).permute(1, 0, 2) 
                 else:
@@ -115,7 +115,7 @@ def extract_lvm_features(filenames, dataset, args):
         image_file_paths: list of image file paths
         args: argparse arguments
     """
-    assert args.pool == 'none', "pooling is not supported for lvm features"
+    assert args.pool == 'cls', "pooling is not supported for lvm features"
     
     for lvm_model_name in filenames:
         assert 'vit' in lvm_model_name, "only vision transformers are supported"
@@ -124,6 +124,7 @@ def extract_lvm_features(filenames, dataset, args):
             args.output_dir, args.dataset, args.subset, lvm_model_name,
             pool=args.pool, prompt=None,
         )
+        os.makedirs(os.path.dirname(save_path), exist_ok=True)
         
         print(f"\ndataset: \t{args.dataset}")
         print(f"subset:    \t{args.subset}")
@@ -154,7 +155,7 @@ def extract_lvm_features(filenames, dataset, args):
                 ims = torch.stack([transform(dataset[j]['image']) for j in range(i, i+args.batch_size)]).cuda()
                 lvm_output = vision_model(ims)
 
-                if args.pool == "none":
+                if args.pool == "cls":
                     feats = [v[:, 0, :] for v in lvm_output.values()]
                     feats = torch.stack(feats).permute(1, 0, 2)
                     
@@ -171,12 +172,17 @@ def extract_lvm_features(filenames, dataset, args):
 
 if __name__ == "__main__":
     
+    """
+    python extract_features.py --dataset minhuh/prh --subset wit_1024 --modelset val --modality language --pool avg
+    python extract_features.py --dataset minhuh/prh --subset wit_1024 --modelset val --modality vision --pool cls
+
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument("--force_download", action="store_true")
     parser.add_argument("--force_remake",   action="store_true")
     parser.add_argument("--num_samples",    type=int, default=1024)
     parser.add_argument("--batch_size",     type=int, default=4)
-    parser.add_argument("--pool",           type=str, default='avg', choices=['avg', 'none'])
+    parser.add_argument("--pool",           type=str, default='avg', choices=['avg', 'cls', 'last'])
     parser.add_argument("--prompt",         action="store_true")
     parser.add_argument("--dataset",        type=str, default="prh")
     parser.add_argument("--subset",         type=str, default="wit_1024")
@@ -192,10 +198,7 @@ if __name__ == "__main__":
     llm_models, lvm_models = get_models(args.modelset, modality=args.modality)
     
     # load dataset once outside    
-    if args.modality in ["language"]:
-        dataset = load_dataset(args.dataset, revision=args.subset + '_meta', split='train')
-    else:
-        dataset = load_dataset(args.dataset, revision=args.subset, split='train')
+    dataset = load_dataset(args.dataset, revision=args.subset, split='train')
 
     if args.modality in ["all", "language"]:
         # extract all language model features
