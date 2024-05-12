@@ -34,10 +34,10 @@ First, we extract features from the models.
 
 ```bash
 # extract all language model features and pool them along each block
-python extract_features.py --dataset wit --modelset val --modality language --pool avg
+python extract_features.py --dataset minhuh/prh --subset wit_1024 --modelset val --modality language --pool avg
 
 # extract last layer features of all vision models
-python extract_features.py --dataset wit --modelset val --modality vision --pool none
+python extract_features.py --dataset minhuh/prh --subset wit_1024 --modelset val --modality vision --pool none
 ```
 
 The resulting features are stored in `./results/features` 
@@ -46,14 +46,14 @@ The resulting features are stored in `./results/features`
 After extracting the features, you can compute the alignment score by 
 
 ```bash
-python measure_alignment.py --dataset wit --num_samples 1024 --modelset val --metric mutual_knn --topk 10 \
+python measure_alignment.py --dataset minhuh/prh --subset wit_1024 --modelset val \
         --modality_x language --pool_x avg --modality_y vision --pool_y none
 ```
 
 The resulting alignment scores will be stored in `./results/alignment`
 
 ```python
->>> fp = 'results/alignment/wit/val/vision_pool-none_prompt-False_language_pool-avg_prompt-False/1024/mutual_knn_k10.npy'
+>>> fp = './results/alignment/minhuh/prh/val/language_pool-avg_prompt-False_vision_pool-none_prompt-False/mutual_knn_k10.npy'
 >>> result = np.load(fp, allow_pickle=True).item()
 >>> print(results.keys()
 dict_keys(['scores', 'indices'])
@@ -89,7 +89,7 @@ Feel free to add your own in `metrics.py`
 Simply copy the `metrics.py` file to your repo, and you can use it anywhere. It expects a tensor of shape `[batch x feats]`
 
 ```python
-from metrics import alignment
+from metrics import AlignmentMetrics
 import torch.nn.functional as F
 
 feats_A = torch.randn(64, 8192)
@@ -98,10 +98,10 @@ feats_A = F.normalize(feats_A, dim=-1)
 feats_B = F.normalize(feats_B, dim=-1)
 
 # measure score
-score = alignment.measure('cknna', feats_A, feats_B, topk=10)
+score = AlignmentMetrics.measure('cknna', feats_A, feats_B, topk=10)
 
 # alternative
-score = alignment.cknna(feats_A, feats_B, topk=10)
+score = AlignmentMetrics.cknna(feats_A, feats_B, topk=10)
 ```
 
 
