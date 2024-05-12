@@ -79,15 +79,15 @@ def extract_llm_features(filenames, dataset, args):
                 
                 # make sure to do all the processing in cpu to avoid memory problems
                 if args.pool == 'avg':
-                    feats = torch.stack(llm_output["hidden_states"]).permute(1, 0, 2, 3).cpu()
-                    mask = token_inputs["attention_mask"].unsqueeze(-1).unsqueeze(1).cpu()
+                    feats = torch.stack(llm_output["hidden_states"]).permute(1, 0, 2, 3)
+                    mask = token_inputs["attention_mask"].unsqueeze(-1).unsqueeze(1)
                     feats = (feats * mask).sum(2) / mask.sum(2)
                 elif args.pool == 'none':
-                    feats = [v[:, -1, :].cpu() for v in llm_output["hidden_states"]]
+                    feats = [v[:, -1, :] for v in llm_output["hidden_states"]]
                     feats = torch.stack(feats).permute(1, 0, 2) 
                 else:
                     raise NotImplementedError(f"unknown pooling {args.pool}")
-                llm_feats.append(feats)
+                llm_feats.append(feats.cpu())
 
         print(f"average loss:\t{torch.stack(losses).mean().item()}")
         save_dict = {
@@ -155,9 +155,9 @@ def extract_lvm_features(filenames, dataset, args):
                 lvm_output = vision_model(ims)
 
                 if args.pool == "none":
-                    feats = [v[:, 0, :].cpu() for v in lvm_output.values()]
+                    feats = [v[:, 0, :] for v in lvm_output.values()]
                     feats = torch.stack(feats).permute(1, 0, 2)
-
+                    
                 lvm_feats.append(feats.cpu())
 
         torch.save({"feats": torch.cat(lvm_feats), "num_params": lvm_param_count}, save_path)

@@ -1,38 +1,3 @@
-"""
-desired use case
-
-import platonic
-
-platonic_metric = platonic.Alignment(
-                    dataset="wit", 
-                    subset="prh1024", 
-                    )   
-
-# (something that most likely wont change during training)
-texts = platonic_metric.load(modality="text")
-
-
-# >>>> inside training loop <<<< #
-
-inputs = tokenizer(texts)
-features = model(inputs, extract_features=True)
-
-# compare against vision
-score = platonic.score(features, metric="cknna", topk=5, model="dinov2")
-
-
-
-# what if i want to use custom alignmnet?
-platonic_metric = platonic.Alignment(dataset="custom")
-
-"""
-
-"""
-[ ] create dataset class in huggingface
-[ ] upload features into huggingface
-"""
-
-
 import os 
 import torch
 
@@ -42,8 +7,9 @@ from measure_alignment import compute_score, prepare_features
 
 SUPPORTED_DATASETS = {
     "wit_1024": {
-        "dinov2": "./results/features/minhuh/prh/wit_1024/vit_giant_patch14_dinov2.lvd142m_pool-none.pt",
-        "clip": "./results/features/minhuh/prh/wit_1024/vit_huge_patch14_clip_224.laion2b_pool-none.pt",
+        "dinov2_g": "./results/features/minhuh/prh/wit_1024/vit_giant_patch14_dinov2.lvd142m_pool-none.pt",
+        "clip_h": "./results/features/minhuh/prh/wit_1024/vit_huge_patch14_clip_224.laion2b_pool-none.pt",
+        "llama_65b": "./results/features/minhuh/prh/wit_1024/huggyllama_llama-65b_pool-avg.pt",
         }
     }
 

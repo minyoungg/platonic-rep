@@ -39,6 +39,7 @@ def get_models(modelset, modality='all'):
             "vit_large_patch14_clip_224.laion2b_ft_in12k",
             "vit_huge_patch14_clip_224.laion2b_ft_in12k",
         ]
+        
     elif modelset == 'test':
         llm_models = [
             "allenai/OLMo-1B-hf",
@@ -52,20 +53,8 @@ def get_models(modelset, modality='all'):
             "NousResearch/Meta-Llama-3-70B",
         ]
         
-        lvm_models = [
-            "vit_small_patch16_224.dino",
-            "vit_small_patch8_224.dino",
-            "vit_base_patch16_224.dino",
-            "vit_base_patch8_224.dino",
-            "vit_base_patch16_clip_224.dfn2b",
-            "vit_large_patch14_clip_224.dfn2b",
-            "vit_huge_patch14_clip_224.dfn5b",
-            "vit_huge_patch14_clip_378.dfn5b",
-            "vit_base_patch32_clip_224.metaclip_2pt5b",
-            "vit_base_patch16_clip_224.metaclip_2pt5b",
-            "vit_large_patch14_clip_224.metaclip_2pt5b",
-            "vit_huge_patch14_clip_224.metaclip_2pt5b",
-        ]
+        lvm_models = []
+        
     elif modelset == 'custom':
         llm_models = [
             "bigscience/bloomz-560m",
@@ -80,13 +69,13 @@ def get_models(modelset, modality='all'):
             "huggyllama/llama-13b",
             "huggyllama/llama-30b",
             "huggyllama/llama-65b",
-            "mistralai/Mixtral-8x22B-v0.1",
             "allenai/OLMo-1B-hf",
             "allenai/OLMo-7B-hf", 
             "google/gemma-2b",
             "google/gemma-7b",
             "mistralai/Mistral-7B-v0.1",
             "mistralai/Mixtral-8x7B-v0.1",
+            # "mistralai/Mixtral-8x22B-v0.1", # was too big so did not use
             "NousResearch/Meta-Llama-3-8B",
             "NousResearch/Meta-Llama-3-70B",
         ]
