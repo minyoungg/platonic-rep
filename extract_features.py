@@ -28,7 +28,7 @@ def extract_llm_features(filenames, dataset, args):
 
     texts = [str(x['text'][args.caption_idx]) for x in dataset]
         
-    for llm_model_name in filenames:
+    for llm_model_name in filenames[::-1]:
         save_path = utils.to_feature_filename(
             args.output_dir, args.dataset, args.subset, llm_model_name,
             pool=args.pool, prompt=args.prompt, caption_idx=args.caption_idx,
@@ -172,17 +172,12 @@ def extract_lvm_features(filenames, dataset, args):
 
 if __name__ == "__main__":
     
-    """
-    python extract_features.py --dataset minhuh/prh --subset wit_1024 --modelset val --modality language --pool avg
-    python extract_features.py --dataset minhuh/prh --subset wit_1024 --modelset val --modality vision --pool cls
-
-    """
     parser = argparse.ArgumentParser()
     parser.add_argument("--force_download", action="store_true")
     parser.add_argument("--force_remake",   action="store_true")
     parser.add_argument("--num_samples",    type=int, default=1024)
     parser.add_argument("--batch_size",     type=int, default=4)
-    parser.add_argument("--pool",           type=str, default='avg', choices=['avg', 'cls', 'last'])
+    parser.add_argument("--pool",           type=str, default='avg', choices=['avg', 'cls'])
     parser.add_argument("--prompt",         action="store_true")
     parser.add_argument("--dataset",        type=str, default="prh")
     parser.add_argument("--subset",         type=str, default="wit_1024")

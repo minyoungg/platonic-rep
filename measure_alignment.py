@@ -126,11 +126,11 @@ if __name__ == "__main__":
 
     parser.add_argument("--modality_x",     type=str, default="all", choices=["vision", "language", "all"])
     parser.add_argument("--prompt_x",       action="store_true")
-    parser.add_argument("--pool_x",         type=str, default=None, choices=['avg', 'none'])
+    parser.add_argument("--pool_x",         type=str, default=None, choices=['avg', 'cls'])
     
     parser.add_argument("--modality_y",     type=str, default="all", choices=["vision", "language", "all"])
     parser.add_argument("--prompt_y",       action="store_true")
-    parser.add_argument("--pool_y",         type=str, default=None, choices=['avg', 'none'])
+    parser.add_argument("--pool_y",         type=str, default=None, choices=['avg', 'cls'])
 
     parser.add_argument("--modelset",       type=str, default="val", choices=["val", "test"])
     parser.add_argument("--metric",         type=str, default="mutual_knn", choices=metrics.AlignmentMetrics.SUPPORTED_METRICS)

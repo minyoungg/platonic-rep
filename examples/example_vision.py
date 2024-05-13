@@ -11,9 +11,9 @@ from torchvision.models.feature_extraction import create_feature_extractor
 
 # setup platonic metric
 platonic_metric = platonic.Alignment(
-                    dataset="minhuh/prh", # <--- this is dataset 
-                    subset="wit_1024",    # <--- this is subset
-                    models=["openllama_7b"], #, "llama_65b"], 
+                    dataset="minhuh/prh", # <--- this is the dataset 
+                    subset="wit_1024",    # <--- this is the subset
+                    models=["openllama_7b", "llama_65b"], 
                     ) # you can also pass in device and dtype as arguments
 
 # load images
@@ -32,7 +32,7 @@ return_nodes = [f"blocks.{i}.add_1" for i in range(len(vision_model.blocks))]
 vision_model = create_feature_extractor(vision_model, return_nodes=return_nodes)
 
 lvm_feats = []
-batch_size = 4
+batch_size = 16
 
 for i in trange(0, len(images), batch_size):
     ims = torch.stack([transform(images[j]) for j in range(i,i+batch_size)]).cuda()

@@ -7,9 +7,9 @@ from pprint import pprint
 
 # setup platonic metric
 platonic_metric = platonic.Alignment(
-                    dataset="minhuh/prh", # <--- this is dataset 
-                    subset="wit_1024",    # <--- this is subset
-                    models=["dinov2_g"]#, "clip_h"],
+                    dataset="minhuh/prh", # <--- this is the dataset 
+                    subset="wit_1024",    # <--- this is the subset
+                    models=["dinov2_g", "clip_h"],
                     ) # you can also pass in device and dtype as arguments
 
 # load texts
@@ -25,7 +25,7 @@ tokenizer = load_tokenizer(model_name)
 tokens = tokenizer(texts, padding="longest", return_tensors="pt")        
 
 llm_feats = []
-batch_size = 4
+batch_size = 16
 
 for i in trange(0, len(texts), batch_size):
     token_inputs = {k: v[i:i+batch_size].to(device).long() for (k, v) in tokens.items()}
