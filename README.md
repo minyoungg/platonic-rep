@@ -1,12 +1,12 @@
 <h1 align="center">The Platonic Representation Hypothesis</h1>
 
-<h3 align="center"><a href="https://arxiv.org" style="color: #E34F26;">paper</a>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-<a href="https://example.com/project" style="color: #2088FF;">project page</a><br></h3>
+<h3 align="center"><a href="https://phillipi.github.io/prh/" style="color: #E34F26;">paper</a>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+<a href="https://phillipi.github.io/prh/" style="color: #2088FF;">project page</a><br></h3>
 <h5 align="center">
-<a href="https://example.com/minyoung" style="color: #3178C6;">minyoung huh</a>* &nbsp&nbsp&nbsp&nbsp&nbsp
-<a href="https://example.com/brian" style="color: #E34F26;">brian cheung</a>* &nbsp&nbsp&nbsp&nbsp&nbsp
-<a href="https://example.com/tongzhou" style="color: #FCC624;">tongzhou wang</a>* &nbsp&nbsp&nbsp&nbsp&nbsp
-<a href="https://example.com/phillip" style="color: #4EAA25;">phillip isola</a>* &nbsp&nbsp&nbsp&nbsp&nbsp
+<a href="https://minyoungg.github.io/me/" style="color: #3178C6;">minyoung huh</a>* &nbsp&nbsp&nbsp&nbsp&nbsp
+<a href="https://briancheung.github.io/" style="color: #E34F26;">brian cheung</a>* &nbsp&nbsp&nbsp&nbsp&nbsp
+<a href="https://www.tongzhouwang.info/" style="color: #FCC624;">tongzhou wang</a>* &nbsp&nbsp&nbsp&nbsp&nbsp
+<a href="https://web.mit.edu/phillipi/" style="color: #4EAA25;">phillip isola</a>* &nbsp&nbsp&nbsp&nbsp&nbsp
 </h5>
 
 <hr>
