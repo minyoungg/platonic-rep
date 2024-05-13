@@ -174,6 +174,15 @@ If our download URL is down, please give it some time, as we will try to set it 
 In the meantime, you can compute the same exact features by running the example code in the `extracting features` section above.
 
 <br />
+<br />
+
+
+<b> ❔ Reporting alignment scores </b><br>
+
+Note that numbers might vary with different precision and batch-size due to hardware/algorithm variabilities.
+When evaluating alignment trends, we recommend you to regenerate the features using the same settings when reporting numbers.
+
+<br />
 
 <hr> 
 
