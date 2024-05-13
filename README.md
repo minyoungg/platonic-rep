@@ -83,8 +83,8 @@ import platonic
 
 # setup platonic metric
 platonic_metric = platonic.Alignment(
-                    dataset="minhuh/prh", # <--- this is dataset 
-                    subset="wit_1024",    # <--- this is subset
+                    dataset="minhuh/prh",
+                    subset="wit_1024", 
                     models=["dinov2_g", "clip_h"],
                     ) # optional arguments device, dtype, save_dir (or path to your features)
 
