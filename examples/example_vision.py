@@ -32,7 +32,8 @@ return_nodes = [f"blocks.{i}.add_1" for i in range(len(vision_model.blocks))]
 vision_model = create_feature_extractor(vision_model, return_nodes=return_nodes)
 
 lvm_feats = []
-batch_size = 16
+batch_size = 32
+
 
 for i in trange(0, len(images), batch_size):
     ims = torch.stack([transform(images[j]) for j in range(i,i+batch_size)]).cuda()

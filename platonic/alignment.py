@@ -52,6 +52,7 @@ class Alignment():
     def get_data(self, modality):
         """ load data 
         TODO: use multiprocessing to speed up loading
+        
         """
         if modality == "text": # list of strings
             return [x['text'][0] for x in self.dataset]
@@ -75,8 +76,8 @@ class Alignment():
         scores = {}
         for m in self.models:
             scores[m] = compute_score(
-                prepare_features(features.to(device=self.device, dtype=self.dtype)), 
-                prepare_features(self.features[m].to(device=self.device, dtype=self.dtype)),
+                prepare_features(features, exact=True).to(device=self.device, dtype=self.dtype), 
+                prepare_features(self.features[m], exact=True).to(device=self.device, dtype=self.dtype) ,
                 metric, 
                 *args, 
                 **kwargs
