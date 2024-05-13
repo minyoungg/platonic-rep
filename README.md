@@ -56,7 +56,7 @@ python measure_alignment.py --dataset minhuh/prh --subset wit_1024 --modelset va
 The resulting alignment scores will be stored in `./results/alignment`
 
 ```python
->>> fp = './results/alignment/minhuh/prh/val/language_pool-avg_prompt-False_vision_pool-none_prompt-False/mutual_knn_k10.npy'
+>>> fp = './results/alignment/minhuh/prh/val/language_pool-avg_prompt-False_vision_pool-cls_prompt-False/mutual_knn_k10.npy'
 >>> result = np.load(fp, allow_pickle=True).item()
 >>> print(results.keys()
 dict_keys(['scores', 'indices'])
@@ -114,6 +114,8 @@ feats = (feats * mask).sum(2) / mask.sum(2)
 score = platonic_metric.score(feats, metric="mutual_knn", topk=10, normalize=True)
 ```
 
+We provide examples for both vision and language in `examples`. You can run them via `python examples/example_language.py`. It will download the features in the local directory if you don't have it computed already.
+
 <hr>
 
 <h3> Customization / Questions </h3>
@@ -130,7 +132,7 @@ To add your own set of models, add them and correctly modify the files in `tasks
 
 To check all supported alignment metrics run 
 ```bash
->>> python -c 'from metrics import alignment; print(alignment.SUPPORTED_METRICS)'
+>>> python -c 'from metrics import AlignmentMetrics; print(AlignmentMetrics.SUPPORTED_METRICS)'
 ['cycle_knn', 'mutual_knn', 'lcs_knn', 'cka', 'unbiased_cka', 'cknna', 'svcca', 'edit_distance_knn']
 ```
 Feel free to add your own in `metrics.py`
