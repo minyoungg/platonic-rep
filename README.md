@@ -65,7 +65,7 @@ dict_keys(['scores', 'indices'])
 ```
 
 <hr>
-<h3> Alignment scoring on your own model </h3>
+<h3> Scoring your own model for alignment to Platonic Representation Hypothesis </h3>
 
 We provide code to compute alignment scores for your own model while training/evaluating.
 
