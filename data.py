@@ -94,8 +94,9 @@ def prepare_facebook_pmd_dataset(
             image_key = "image"
 
         im = get_image_fn(d[image_key])
-
-        if im is not None:
+        
+        # make sure atleast 1 token long. it might be better to set it higher
+        if (im is not None) and (len(d['text'].split(' ')) > 1):
         
             captions = [d['text']]
             # get original image name and store in data also

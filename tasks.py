@@ -48,7 +48,7 @@ def get_models(modelset, modality='all'):
             "google/gemma-7b",
             "mistralai/Mistral-7B-v0.1",
             "mistralai/Mixtral-8x7B-v0.1",
-            "mistralai/Mixtral-8x22B-v0.1",
+            # "mistralai/Mixtral-8x22B-v0.1",
             "NousResearch/Meta-Llama-3-8B",
             "NousResearch/Meta-Llama-3-70B",
         ]
