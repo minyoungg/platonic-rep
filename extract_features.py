@@ -26,12 +26,12 @@ def extract_llm_features(filenames, dataset, args):
         args: argparse arguments
     """
 
-    texts = [str(x['text'][0]) for x in dataset]
-    
+    texts = [str(x['text'][args.caption_idx]) for x in dataset]
+        
     for llm_model_name in filenames:
         save_path = utils.to_feature_filename(
             args.output_dir, args.dataset, args.subset, llm_model_name,
-            pool=args.pool, prompt=args.prompt,
+            pool=args.pool, prompt=args.prompt, caption_idx=args.caption_idx,
         )
         
         os.makedirs(os.path.dirname(save_path), exist_ok=True)
@@ -122,7 +122,7 @@ def extract_lvm_features(filenames, dataset, args):
         
         save_path = utils.to_feature_filename(
             args.output_dir, args.dataset, args.subset, lvm_model_name,
-            pool=args.pool, prompt=None,
+            pool=args.pool, prompt=None, caption_idx=None,
         )
         os.makedirs(os.path.dirname(save_path), exist_ok=True)
         
@@ -186,6 +186,7 @@ if __name__ == "__main__":
     parser.add_argument("--prompt",         action="store_true")
     parser.add_argument("--dataset",        type=str, default="prh")
     parser.add_argument("--subset",         type=str, default="wit_1024")
+    parser.add_argument("--caption_idx",    type=int, default=0)
     parser.add_argument("--modelset",       type=str, default="val", choices=["val", "test"])
     parser.add_argument("--modality",       type=str, default="all", choices=["vision", "language", "all"])
     parser.add_argument("--output_dir",     type=str, default="./results/features")

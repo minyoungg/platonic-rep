@@ -137,20 +137,14 @@ def prepare_facebook_pmd_dataset(
     
     if upload_to_hub:
         generated_dataset.push_to_hub(f"minhuh/{save_dataset}", revision=f"{save_subset}", private=True)
-
-    print('saving text dataset')
-    generated_dataset = load_dataset("json", data_files=f"{save_dir}/metadata.jsonl", split="train")
-    
-    if upload_to_hub:
-        generated_dataset.push_to_hub(f"minhuh/{save_dataset}", revision=f"{save_subset}_meta", private=True)
             
     print("done.\n")
-    print(f"load the (image, text) dataset via \t`load_dataset('minhuh/prh', revision={save_subset}, split='train')`")        
-    print(f"load the (text) dataset via        \t`load_dataset('minhuh/prh', revision={save_subset}_meta, split='train')`")        
+    print(f"load the dataset via \t`load_dataset('minhuh/prh', revision={save_subset}, split='train')`")        
     return
 
 
 if __name__ == "__main__":
     # example code of how the data partition was generated
     # see notes in prepare_facebook_pmd_dataset for minor details
-    prepare_facebook_pmd_dataset(subset="wit", save_dataset="prh", save_subset="wit_1024", num_samples=1024, seed=42)
+    # prepare_facebook_pmd_dataset(subset="wit", save_dataset="prh", save_subset="wit_1024", num_samples=1024, seed=42)
+    prepare_facebook_pmd_dataset(subset="wit", save_dataset="prh", save_subset="wit_4096", num_samples=4096, seed=42)

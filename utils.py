@@ -3,13 +3,15 @@ import torch
 import math
 
 
-def to_feature_filename(output_dir, dataset, subset, model_name, pool=None, prompt=None):
+def to_feature_filename(output_dir, dataset, subset, model_name, pool=None, prompt=None, caption_idx=None):
     save_name = f"{model_name.replace('/', '_')}"
 
     if pool:
         save_name += f"_pool-{pool}"
     if prompt:
         save_name += f"_prompt-{prompt}"
+    if caption_idx:
+        save_name += f"_cid-{caption_idx}"
     
     save_path = os.path.join(
         output_dir, 
