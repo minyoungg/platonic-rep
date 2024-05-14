@@ -1,6 +1,6 @@
 <h1 align="center">The Platonic Representation Hypothesis</h1>
 
-<h3 align="center"><a href="https://phillipi.github.io/prh/" style="color: #E34F26;">paper</a>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+<h3 align="center"><a href="http://arxiv.org/abs/2405.07987" style="color: #E34F26;">paper</a>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
 <a href="https://phillipi.github.io/prh/" style="color: #2088FF;">project page</a><br></h3>
 <h5 align="center">
 <a href="https://minyoungg.github.io/me/" style="color: #3178C6;">minyoung huh</a>* &nbsp&nbsp&nbsp&nbsp&nbsp
