@@ -32,7 +32,9 @@ class Alignment():
                 
                 # download and save the features in the feat_path
                 os.makedirs(os.path.dirname(feat_path), exist_ok=True)
-                os.system(f"wget {feat_url} -O {feat_path}")
+                exit_code = os.system(f"wget {feat_url} -O {feat_path}")
+                if exit_code != 0:
+                    raise ValueError(f"Failed to download features for {m} in {dataset}/{subset}")
 
                 if not os.path.exists(feat_path):            
                     raise ValueError(f"feature path {feat_path} does not exist for {m} in {dataset}/{subset}")

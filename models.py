@@ -1,5 +1,5 @@
 import torch
-from transformers import AutoModelForCausalLM, BitsAndBytesConfig, AutoTokenizer
+from transformers import AutoModelForCausalLM, BitsAndBytesConfig, AutoTokenizer, AutoConfig
 
 
 def auto_determine_dtype():
@@ -24,7 +24,7 @@ def check_bfloat16_support():
         return None
     
     
-def load_llm(llm_model_path, qlora=False, force_download=False):
+def load_llm(llm_model_path, qlora=False, force_download=False, from_init=False):
     """ load huggingface language model """
     compute_dtype, torch_dtype = auto_determine_dtype()
     
@@ -38,15 +38,27 @@ def load_llm(llm_model_path, qlora=False, force_download=False):
             bnb_4bit_use_double_quant=True,
             bnb_4bit_quant_type="nf4",
         )
-                
-    language_model = AutoModelForCausalLM.from_pretrained(
-            llm_model_path,
-            device_map="auto",
-            quantization_config=quantization_config,
-            torch_dtype=torch_dtype,
-            force_download=force_download,
-            output_hidden_states=True,
-    ).eval()
+
+    if from_init:
+        config = AutoConfig.from_pretrained(llm_model_path,
+                                            device_map="auto",
+                                            quantization_config=quantization_config,
+                                            torch_dtype=torch_dtype,
+                                            force_download=force_download,
+                                            output_hidden_states=True,)
+        language_model = AutoModelForCausalLM.from_config(config)
+        language_model = language_model.to(torch_dtype)
+        language_model = language_model.to("cuda" if torch.cuda.is_available() else "cpu")
+        language_model = language_model.eval()
+    else:      
+        language_model = AutoModelForCausalLM.from_pretrained(
+                llm_model_path,
+                device_map="auto",
+                quantization_config=quantization_config,
+                torch_dtype=torch_dtype,
+                force_download=force_download,
+                output_hidden_states=True,
+        ).eval()
     
     return language_model
 
