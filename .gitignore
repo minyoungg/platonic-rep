@@ -1,0 +1,7 @@
+*.sh
+data/
+results/
+*pt
+*egg-info/**
+**__pycache__/**
+*.pyc*

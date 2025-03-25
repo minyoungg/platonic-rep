@@ -1,0 +1,11 @@
+torch>=2.1.2
+torchvision
+torchaudio
+tqdm
+datasets
+scikit-learn
+transformers
+timm
+accelerate
+sentencepiece
+protobuf
