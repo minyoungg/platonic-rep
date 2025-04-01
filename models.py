@@ -58,7 +58,6 @@ def load_llm(llm_model_path, qlora=False, force_download=False, from_init=False)
                 torch_dtype=torch_dtype,
                 force_download=force_download,
                 output_hidden_states=True,
-                return_dict_in_generate=True,
         ).eval()
     
     return language_model
@@ -76,9 +75,5 @@ def load_tokenizer(llm_model_path):
         if tokenizer.pad_token is None:    
             tokenizer.pad_token = tokenizer.pad_token or tokenizer.eos_token
 
-    if "gemma" in llm_model_path.lower():
-        # need to right pad for gemma
-        tokenizer.padding_side = "right"
-    else:
-        tokenizer.padding_side = "left"
+    tokenizer.padding_side = "left"
     return tokenizer

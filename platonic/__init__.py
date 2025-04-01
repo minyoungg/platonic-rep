@@ -107,22 +107,6 @@ SUPPORTED_DATASETS = {
             "path": "./results/features/minhuh/prh/wit_1024/huggyllama_llama-65b_pool-avg.pt",   
             "url": "http://vision14.csail.mit.edu/prh/wit_1024/huggyllama_llama-65b_pool-avg.pt"
         },
-        "gemma3_1b": {
-            "path": "./results/features/minhuh/prh/wit_1024/google_gemma-3-1b-pt_pool-avg.pt",
-            "url": None
-        },
-        "gemma3_4b": {
-            "path": "./results/features/minhuh/prh/wit_1024/google_gemma-3-4b-pt_pool-avg.pt",
-            "url": None
-        },
-        "gemma3_12b": {
-            "path": "./results/features/minhuh/prh/wit_1024/google_gemma-3-12b-pt_pool-avg.pt",
-            "url": None
-        },
-        "gemma3_27b": {
-            "path": "./results/features/minhuh/prh/wit_1024/google_gemma-3-27b-pt_pool-avg.pt",
-            "url": None
-        },
     }
 }
 

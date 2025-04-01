@@ -47,9 +47,6 @@ def extract_llm_features(filenames, dataset, args):
         language_model = load_llm(llm_model_name, qlora=args.qlora, force_download=args.force_download)
         llm_param_count = sum([p.numel() for p in language_model.parameters()])
         tokenizer = load_tokenizer(llm_model_name)
-        if 'gemma' in llm_model_name.lower():
-            # need to right pad for gemma
-            tokenizer.padding_side = "right"
     
         tokens = tokenizer(texts, padding="longest", return_tensors="pt")        
         llm_feats, losses, bpb_losses = [], [], []
@@ -185,7 +182,7 @@ if __name__ == "__main__":
     parser.add_argument("--dataset",        type=str, default="prh")
     parser.add_argument("--subset",         type=str, default="wit_1024")
     parser.add_argument("--caption_idx",    type=int, default=0)
-    parser.add_argument("--modelset",       type=str, default="val", choices=["val", "test", "custom"])
+    parser.add_argument("--modelset",       type=str, default="val", choices=["val", "test"])
     parser.add_argument("--modality",       type=str, default="all", choices=["vision", "language", "all"])
     parser.add_argument("--output_dir",     type=str, default="./results/features")
     parser.add_argument("--qlora",          action="store_true")
