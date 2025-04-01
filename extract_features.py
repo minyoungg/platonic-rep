@@ -47,6 +47,9 @@ def extract_llm_features(filenames, dataset, args):
         language_model = load_llm(llm_model_name, qlora=args.qlora, force_download=args.force_download)
         llm_param_count = sum([p.numel() for p in language_model.parameters()])
         tokenizer = load_tokenizer(llm_model_name)
+        if 'gemma' in llm_model_name.lower():
+            # need to right pad for gemma
+            tokenizer.padding_side = "right"
     
         tokens = tokenizer(texts, padding="longest", return_tensors="pt")        
         llm_feats, losses, bpb_losses = [], [], []
