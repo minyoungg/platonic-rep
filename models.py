@@ -74,6 +74,6 @@ def load_tokenizer(llm_model_path):
         # tokenizer.add_special_tokens({"pad_token":"<pad>"})
         if tokenizer.pad_token is None:    
             tokenizer.pad_token = tokenizer.pad_token or tokenizer.eos_token
-
+    
     tokenizer.padding_side = "left"
     return tokenizer
