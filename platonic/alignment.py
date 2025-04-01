@@ -48,7 +48,11 @@ class Alignment():
 
     def load_features(self, feat_path):
         """ loads features for a model """
-        return torch.load(feat_path, map_location=self.device)["feats"].to(dtype=self.dtype)
+        raw_feats = torch.load(feat_path, map_location=self.device)["feats"]
+        if isinstance(raw_feats, torch.Tensor):
+            return raw_feats.to(dtype=self.dtype)
+        else:
+            return [layer.to(dtype=self.dtype) for layer in raw_feats]
 
     
     def get_data(self, modality):
@@ -76,14 +80,25 @@ class Alignment():
                 layer_indices are the index of the layer with maximal alignment
         """
         scores = {}
+
+        x = prepare_features(features, exact=True)
+        if isinstance(x, list):
+            x = [f.to(device=self.device, dtype=self.dtype) for f in x]
+        else:
+            x = x.to(device=self.device, dtype=self.dtype)
+
         for m in self.models:
+            y = prepare_features(self.features[m], exact=True)
+            if isinstance(y, list):
+                y = [f.to(device=self.device, dtype=self.dtype) for f in y]
+            else:
+                y = y.to(device=self.device, dtype=self.dtype)
+
             scores[m] = compute_score(
-                prepare_features(features, exact=True).to(device=self.device, dtype=self.dtype), 
-                prepare_features(self.features[m], exact=True).to(device=self.device, dtype=self.dtype) ,
+                x, 
+                y,
                 metric, 
                 *args, 
                 **kwargs
             )
         return scores        
-    
-    

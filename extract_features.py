@@ -182,7 +182,7 @@ if __name__ == "__main__":
     parser.add_argument("--dataset",        type=str, default="prh")
     parser.add_argument("--subset",         type=str, default="wit_1024")
     parser.add_argument("--caption_idx",    type=int, default=0)
-    parser.add_argument("--modelset",       type=str, default="val", choices=["val", "test"])
+    parser.add_argument("--modelset",       type=str, default="val", choices=["val", "test", "custom"])
     parser.add_argument("--modality",       type=str, default="all", choices=["vision", "language", "all"])
     parser.add_argument("--output_dir",     type=str, default="./results/features")
     parser.add_argument("--qlora",          action="store_true")
