@@ -40,11 +40,11 @@ class Alignment():
                     raise ValueError(f"feature path {feat_path} does not exist for {m} in {dataset}/{subset}")
 
             self.features[m] = self.load_features(feat_path)
-            
+
         # download dataset from huggingface        
         self.dataset = load_dataset(dataset, revision=subset, split='train')
         return
-    
+
 
     def load_features(self, feat_path):
         """ loads features for a model """
@@ -54,7 +54,7 @@ class Alignment():
         else:
             return [layer.to(dtype=self.dtype) for layer in raw_feats]
 
-    
+
     def get_data(self, modality):
         """ load data 
         TODO: use multiprocessing to speed up loading
@@ -66,7 +66,7 @@ class Alignment():
             return [x['image'] for x in self.dataset]
         else:
             raise ValueError(f"modality {modality} not supported")
-    
+
     def score(self, features, metric, *args, **kwargs):
         """ 
         Args:

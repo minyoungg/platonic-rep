@@ -44,7 +44,8 @@ def compute_score(x_feats, y_feats, metric="mutual_knn", topk=10, normalize=True
     if isinstance(x_feats, torch.Tensor):
         x_feats = [x_feats[:, i, :] for i in range(x_feats.shape[1])]
 
-    y_feats = [y_feats[:, j, :] for j in range(y_feats.shape[1])]
+    if isinstance(y_feats, torch.Tensor):
+        y_feats = [y_feats[:, j, :] for j in range(y_feats.shape[1])]
 
     best_alignment_indices = None
     best_alignment_score = 0
@@ -110,8 +111,12 @@ def compute_alignment(x_feat_paths, y_feat_paths, metric, topk, precise=True):
                 if i > j:
                     pbar.update(1)
                     continue           
-                        
-            y_feats = prepare_features(torch.load(y_fp, map_location="cuda:0")["feats"].float(), exact=precise)
+
+            raw_y = torch.load(y_fp, map_location="cuda:0")["feats"]
+            if isinstance(raw_y, torch.Tensor):
+                y_feats = prepare_features(raw_y.float(), exact=precise)
+            else:
+                y_feats = [prepare_features(layer.float(), exact=precise) for layer in raw_y]
             best_score, best_indices = compute_score(y_feats, x_feats, metric=metric, topk=topk)
             
             alignment_scores[i, j] = best_score
