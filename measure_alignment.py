@@ -22,8 +22,13 @@ def prepare_features(feats, q=0.95, exact=False):
     Returns:
         feats: a torch tensor of the same shape as the input
     """
-    feats = metrics.remove_outliers(feats.float(), q=q, exact=exact)
-    return feats.cuda()
+    if isinstance(feats, torch.Tensor):
+        feats = metrics.remove_outliers(feats.float(), q=q, exact=exact)
+        return feats.cuda()
+    elif isinstance(feats, list):
+        return [metrics.remove_outliers(f.float(), q=q, exact=exact).cuda() for f in feats]
+    else:
+        raise ValueError(f"Unsupported input type for prepare_features: {type(feats)}")
 
 
 def compute_score(x_feats, y_feats, metric="mutual_knn", topk=10, normalize=True):
@@ -36,29 +41,33 @@ def compute_score(x_feats, y_feats, metric="mutual_knn", topk=10, normalize=True
         best_alignment_score: the best alignment score
         best_alignment: the indices of the best alignment
     """
+    if isinstance(x_feats, torch.Tensor):
+        x_feats = [x_feats[:, i, :] for i in range(x_feats.shape[1])]
+
+    if isinstance(y_feats, torch.Tensor):
+        y_feats = [y_feats[:, j, :] for j in range(y_feats.shape[1])]
+
     best_alignment_indices = None
     best_alignment_score = 0
 
-    for i in range(-1, x_feats.shape[1]):
-        x = x_feats.flatten(1, 2) if i == -1 else x_feats[:, i, :]
-
-        for j in range(-1, y_feats.shape[1]):
-            y = y_feats.flatten(1, 2) if j == -1 else y_feats[:, j, :]
+    for i, x in enumerate(x_feats):
+        for j, y in enumerate(y_feats):
+            if normalize:
+                x_aligned = F.normalize(x, p=2, dim=-1)
+                y_aligned = F.normalize(y, p=2, dim=-1)
+            else:
+                x_aligned = x
+                y_aligned = y
 
             kwargs = {}
             if 'knn' in metric:
                 kwargs['topk'] = topk
-                    
-            if normalize:
-                x = F.normalize(x, p=2, dim=-1)
-                y = F.normalize(y, p=2, dim=-1)
-            
-            score = metrics.AlignmentMetrics.measure(metric, x, y, **kwargs)
+
+            score = metrics.AlignmentMetrics.measure(metric, x_aligned, y_aligned, **kwargs)
 
             if score > best_alignment_score:
                 best_alignment_score = score
                 best_alignment_indices = (i, j)
-    
     return best_alignment_score, best_alignment_indices
 
     
@@ -89,15 +98,25 @@ def compute_alignment(x_feat_paths, y_feat_paths, metric, topk, precise=True):
     pbar = tqdm(total=len(y_feat_paths) * len(x_feat_paths))
 
     for i, x_fp in enumerate(x_feat_paths):
-        x_feats = prepare_features(torch.load(x_fp, map_location="cuda:0")["feats"].float(), exact=precise)
+        raw_x = torch.load(x_fp, map_location="cuda:0")["feats"]
+        if isinstance(raw_x, torch.Tensor):
+            x_feats = prepare_features(raw_x.float(), exact=precise)
+        else:
+            x_feats = [prepare_features(layer.float(), exact=precise) for layer in raw_x]
+        
+        # x_feats = prepare_features(torch.load(x_fp, map_location="cuda:0")["feats"].float(), exact=precise)
             
         for j, y_fp in enumerate(y_feat_paths):
             if symmetric_metric:
                 if i > j:
                     pbar.update(1)
                     continue           
-                        
-            y_feats = prepare_features(torch.load(y_fp, map_location="cuda:0")["feats"].float(), exact=precise)
+
+            raw_y = torch.load(y_fp, map_location="cuda:0")["feats"]
+            if isinstance(raw_y, torch.Tensor):
+                y_feats = prepare_features(raw_y.float(), exact=precise)
+            else:
+                y_feats = [prepare_features(layer.float(), exact=precise) for layer in raw_y]
             best_score, best_indices = compute_score(y_feats, x_feats, metric=metric, topk=topk)
             
             alignment_scores[i, j] = best_score
